@@ -1,0 +1,48 @@
+using System.IO;
+using System;
+using System.Collections.Generic;
+
+// Dutch national flags sorting problem
+
+// https://coderbyte.com/algorithm/dutch-national-flag-sorting-problem
+
+class Program
+{
+    static void Main()
+    {
+        List<int> flags = new List<int> {1, 0, 2, 1, 1, 1, 2, 0, 2, 2, 2 };
+        
+        int left = 0;
+        int right = flags.Count - 1;
+        int middle = 0;
+
+        
+        while (middle <= right)
+        {
+            if (flags[middle] == 0)
+            {
+                Swap(flags, left, middle);
+                left++;
+                middle++;
+            }
+            else if (flags[middle] == 1)
+            {
+                middle++;
+            }
+            else if (flags[middle] == 2)
+            {
+                Swap(flags, right, middle);
+                right--;
+            }
+        }
+
+        Console.WriteLine(string.Join(", ", flags));
+    }
+    
+    static void Swap(List<int> list, int a, int b)
+    {
+        int temp = list[a];
+        list[a] = list[b];
+        list[b] = temp;
+    }
+}
