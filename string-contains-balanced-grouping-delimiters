@@ -1,0 +1,72 @@
+using System.IO;
+using System;
+using System.Collections.Generic;
+using System.Linq; // allows use of Contains on char[]
+
+/* determine if a string contains balanced grouping delimiters */
+
+class Program
+{
+    static void Main()
+    {
+        string testString = "[this[is a test][(of {balanced})] () strings]";
+        
+        if (Balanced(testString))
+            Console.WriteLine("\"{0}\" is balanced.", testString);
+        else
+             Console.WriteLine("\"{0}\" is unbalanced.", testString);
+            
+        testString = "[this[is a test][[of {balanced}] () strings]";
+            
+         if (Balanced(testString))
+            Console.WriteLine("\"{0}\" is balanced.", testString);
+        else
+             Console.WriteLine("\"{0}\" is unbalanced.", testString);
+    }
+    
+    static bool Balanced(string inputString)
+    {
+        Stack<char> unmatched = new Stack<char>();
+        
+        for (int i = 0; i < inputString.Length; i++)
+        {
+            char currentChar = inputString[i];
+            
+            if (currentChar == '}' || currentChar == ']' || currentChar == ')')
+            {
+                if ((unmatched.Count == 0) || unmatched.Peek() != MatchingChar(currentChar))
+                {
+                    return false;
+                }
+                else 
+                {
+                    unmatched.Pop();
+                }
+            }
+            if (currentChar == '{' || currentChar == '[' || currentChar == '(')
+            {
+                unmatched.Push(currentChar);
+            }           
+        }
+        
+        if (unmatched.Count() == 0)
+            return true;
+        else
+            return false;
+    }
+    
+    static char MatchingChar(char inputChar)
+    {
+        switch (inputChar)
+        {
+            case '}':
+                return '{';
+            case ']':
+                return '[';
+            case ')':
+                return '(';
+            default:
+                throw new Exception("invalid input char");
+        }     
+    }
+}
