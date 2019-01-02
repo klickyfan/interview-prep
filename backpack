@@ -1,0 +1,90 @@
+using System.IO;
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        Backpack myBackpack = new Backpack();
+        
+        Console.WriteLine("My back pack contains: ");
+        
+        myBackpack.List();
+        
+        myBackpack.Put("book");
+        myBackpack.Put("book");
+        
+        Console.WriteLine("Now my backpack contains: ");
+        
+        myBackpack.List();
+        
+        myBackpack.Put("pencil");
+        myBackpack.Put("eraser");
+        myBackpack.Put("phone");
+        myBackpack.Put("pen");
+        myBackpack.Put("notebook");
+        myBackpack.Put("notebook");
+        myBackpack.Put("pencil");
+        
+        myBackpack.Drop("phone");
+        
+        Console.WriteLine("Now my backpack contains: ");
+        
+        myBackpack.List();
+    }
+}
+
+public class Backpack
+{
+    private Dictionary<string, int> _contents = null;
+    
+    public Backpack()
+    {
+        _contents = new Dictionary<string, int>();
+    }
+    
+    public void Put(string item)
+    {
+        if (_contents.ContainsKey(item))
+        {
+            _contents[item]++;
+        }
+        else 
+        {
+            _contents.Add(item, 1);
+        }
+    }
+    
+    public bool Has(string item)
+    {
+        if (item == null) return false;
+        return _contents.ContainsKey(item);        
+    }
+    
+    public void Drop(string item)
+    {
+        if (_contents.ContainsKey(item))
+        {
+            _contents[item]--;
+            if (_contents[item] == 0)
+            {
+                _contents.Remove(item);
+            }
+        }
+    }
+    
+    public void List()
+    {
+        if (_contents.Count == 0)
+        {
+            Console.WriteLine("nothing");
+            return;
+        }
+        
+        foreach(string key in _contents.Keys)
+        {
+            Console.WriteLine("{0} {1}{2}", _contents[key], key, _contents[key] > 1 ? "s" : string.Empty);
+        }
+    }    
+}
