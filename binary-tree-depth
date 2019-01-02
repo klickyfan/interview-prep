@@ -1,0 +1,94 @@
+using System.IO;
+using System;
+
+// find depth of binary tree
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("Hello, World!");
+        
+        Node tree = MakeTestTree();
+        
+        Console.WriteLine(TreeDepth(tree));
+    }
+        
+    /*
+                                a
+                b                               i
+        c               f                   j       m
+    d       e       g       h           k
+                                    l
+    
+    */
+    static Node MakeTestTree()
+    {
+        Node root = 
+            new Node(
+                "a",
+                new Node(
+                    "b",
+                    new Node(
+                        "c",
+                        new Node("d"),
+                        new Node("e")),
+                    new Node(
+                        "f",
+                        new Node("g"),
+                        new Node("h"))),
+                new Node(
+                    "i",
+                    new Node("j",
+                             new Node("k", 
+                                      new Node("l"),
+                                      null),
+                             null),
+                    new Node("m")));
+                    
+        return root;
+    }
+    
+    static int TreeDepth(Node node)
+    {
+        if (node == null)
+        {
+            return 0;
+        }
+        
+        int leftDepth = TreeDepth(node.Left);
+        int rightDepth = TreeDepth(node.Right);
+        if (leftDepth > rightDepth) 
+            return leftDepth + 1;
+        else 
+            return rightDepth + 1;
+    }
+}
+
+public class Node 
+{        
+    private string value;
+    public string Value { get { return value; } }
+            
+    private Node left;
+    public Node Left { get { return left; } }
+    
+    private Node right;
+    public Node Right { get { return right; } }
+    
+    // constructor for interior node
+    public Node(string value, Node left, Node right)
+    {
+        this.value = value;
+        this.left = left;
+        this.right = right;
+    }
+    
+    // constructor for leaf node
+    public Node(string value)
+    {            
+        this.value = value;
+        this.left = null;
+        this.right = null;
+    }
+}
