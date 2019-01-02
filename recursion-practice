@@ -1,0 +1,120 @@
+using System.IO;
+using System;
+
+/* recursion practice */
+
+class Program
+{
+    const bool DEBUGGING = false;
+    
+    static void Main()
+    {
+        Console.WriteLine("Hello, World!");
+        
+        int testNumber = 5;
+        Console.Write("Factorial of {0}: ", testNumber);
+        int factorial = Factorial(testNumber);
+        Console.WriteLine(factorial);
+        
+        testNumber = 9348521;
+        Console.Write("Sum of digits of {0}: ", testNumber);
+        int sumOfDigits = SumOfDigits(testNumber);
+        Console.WriteLine(sumOfDigits);
+        
+        testNumber = 23;
+        Console.Write("Binary equivalent of {0}: ", testNumber);
+        string binaryEquivalent = ConvertToBinary(testNumber);
+        Console.WriteLine(binaryEquivalent);
+        
+        testNumber = 5;
+        int exponent = 3;
+        Console.Write("{0}^{1} = ", testNumber, exponent);
+        int power = Power(testNumber, exponent);
+        Console.WriteLine(power);
+        
+        testNumber = 11;
+        Console.Write("Fibonacci Series of length {0}: ", testNumber);
+        for (int i = 0; i < testNumber; i++)
+        {
+            Console.Write("{0} ", FibonacciSeries(i));
+        }
+        Console.WriteLine();
+        
+        testNumber = 21;
+        int[] testArray = new int[10]{2, 5, 6, 7, 11, 19, 21, 30, 32, 33};
+        int index = BinarySearch(testNumber, testArray, 0, testArray.Length - 1);
+        Console.WriteLine("Found {0} at {1}", testNumber, index);        
+    }
+    
+    static int Factorial(int number)
+    {
+        if (number == 1)
+            return 1;
+            
+        return number * Factorial(number - 1);
+    }
+    
+    static int SumOfDigits(int number)
+    {
+        if (number == 0)
+            return 0;
+        
+        return number % 10 + SumOfDigits(number/10);
+    }
+    
+    static string ConvertToBinary(int number)
+    {
+        if (number == 0)
+            return string.Empty;
+            
+        return ConvertToBinary(number / 2) + (number % 2);
+    }
+    
+    static int Power(int number, int exponent)
+    {
+        if (exponent == 0)
+            return 1;
+        
+        return number * Power(number, exponent - 1);
+    }
+    
+    static int FibonacciSeries(int n)
+    {
+        if (n == 0) return 0; // return the first Fibonacci number   
+        if (n == 1) return 1; // return the second Fibonacci number   
+        return FibonacciSeries(n - 1) + FibonacciSeries(n - 2);
+    }
+    
+    static int BinarySearch(int number, int[] arr, int min, int max)
+    {
+        if (min > max)
+            return -1;
+            
+        int middle = min + (max - min) / 2;
+        if (DEBUGGING) Console.WriteLine("middle: {0}", middle);
+        
+        if (number == arr[middle])
+        {
+            if (DEBUGGING) Console.WriteLine("found {0}!", number);
+            
+            return middle;
+        }
+        
+        if (number < arr[middle])
+        {
+            if (DEBUGGING)
+                Console.WriteLine(
+                    "Calling BinarySearch({0}, arr, {1}, {2})", 
+                    number, min, middle - 1);
+                    
+            return BinarySearch(number, arr, min, middle - 1);
+        }
+        
+        if (DEBUGGING)
+            Console.WriteLine(
+                "Calling BinarySearch({0}, arr, {1}, {2})", 
+                number, middle + 1, max);
+                
+        return BinarySearch(number, arr, middle + 1, max);
+    }
+}
