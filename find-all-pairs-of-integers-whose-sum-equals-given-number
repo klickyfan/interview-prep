@@ -1,0 +1,103 @@
+using System.IO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Linq;
+
+class Program
+{
+    /*
+    find all pairs of integers whose sum is equal to a given number
+
+    https://javarevisited.blogspot.com/2014/08/how-to-find-all-pairs-in-array-of-integers-whose-sum-equal-given-number-java.html#axzz5Xz10Jvwf
+    */
+    
+    static void Main()
+    {
+        List<int> testList = new List<int>() { 1, 9, 5, 2, 3, 19, -40, -4, 17, 2, 18, -1, 5, -11 };
+        
+        int sum = 8;
+        
+        FindPairsUsingBruteForce(testList, sum);
+        FindPairsUsingHashSet(testList, sum);
+        FindPairsUsingSorting(testList, sum);
+    }
+    
+    static void FindPairsUsingBruteForce(List<int> testList, int sum)
+    {
+        // O(n^2)
+        
+        Console.WriteLine("Pairs found using brute force method:");
+        
+        for (int i = 0; i < testList.Count; i++)
+        {
+            for (int j = i + 1; j < testList.Count; j++)
+            {
+                if ( (testList[i] + testList[j] == sum ) 
+                     && 
+                     (testList[i] != testList[j]) )
+                {
+                     Console.WriteLine("({0}, {1}) ", testList[i], testList[j]);
+                }
+            }
+            
+        }
+        
+        Console.WriteLine();
+    }
+    
+    static void FindPairsUsingHashSet(List<int> testList, int sum)
+    {
+        // O(n); O(n) space
+        
+        Console.WriteLine("Pairs found using hash set:");
+        
+        HashSet<int> set = new HashSet<int>();
+        
+        foreach(int item in testList)
+        {
+            if (set.Contains(sum - item)) {
+                Console.WriteLine("({0}, {1})", item, sum - item);
+            } 
+            else
+            {
+                set.Add(item);
+            }
+        }
+        
+        Console.WriteLine();
+    }
+    
+    static void FindPairsUsingSorting(List<int> testList, int sum)
+    {
+        // O(n); no extra space
+        
+        Console.WriteLine("Pairs found using sorting and pointers:");
+        
+        List<int> sortedTestList = testList.OrderBy(i=>i).ToList();
+        
+        int left = 0;
+        int right = sortedTestList.Count - 1;
+        
+        while (left < right)
+        {
+            int sumFound = sortedTestList[right] + sortedTestList[left];
+            
+            if (sumFound == sum)
+            {
+                Console.WriteLine("({0}, {1})", 
+                    sortedTestList[left], sortedTestList[right]);
+                left++;
+                right--;
+            }
+            else if (sumFound < sum)
+            {
+                left++;
+            }
+            else if (sumFound > sum)
+            {
+                right--;
+            }
+        }
+    }
+}
