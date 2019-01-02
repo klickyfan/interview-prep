@@ -1,0 +1,127 @@
+using System.IO;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+class Program
+{
+    static void Main()
+    {
+        int counter = 1;
+        foreach (var p in PermutationsUsingSubstrings("ABC"))
+        {
+            Console.WriteLine($"{counter++}: {p}");
+        }
+        
+        Console.WriteLine();
+        
+        counter = 1;
+        foreach (var p in PermutationsUsingLinq("ABC"))
+        {
+            Console.WriteLine($"{counter++}: {p}");
+        }
+        
+        Console.WriteLine();
+        
+        string testString = "ABC";
+        char[] charArray = testString.ToCharArray();
+        
+        counter = 1;
+        foreach (var p in PermutationsUsingSwap(charArray, 0, testString.Length - 1))
+        {
+            Console.WriteLine($"{counter++}: {p}");
+        }
+    }
+    
+    /*
+    see p. 356 in CtCI
+    P(a1a2) = { a1 + P(a2), a2 + P(a1) }
+    P(a1a2a3) = { a1 + P(a2a3), a2 + P(a1a3), a3 + P(a1a2);
+
+    Ex. the permutations of ‘abcd’ are:
+
+    ‘a’ plus the permutations of substring ‘bcd’
+    ‘b’ plus the permutations of substring ‘acd’
+    ‘c’ plus the permutations of substring ‘adb’
+    ‘d’ plus the permutations of substring ‘abc’
+    */
+    static List<string> PermutationsUsingSubstrings(string remainder)
+    {
+        int length = remainder.Length;
+        
+        List<string> toReturn = new List<string>();
+        
+        // base case
+        
+        if (length == 0)
+        {
+            toReturn.Add(string.Empty);
+            return toReturn;
+        }
+        
+        for (int i = 0; i < length; i++)
+        {
+            // remove remainder[i] to form newRemainder
+            string before = remainder.Substring(0, i);
+            string after = remainder.Substring(i + 1, length - (i + 1));
+            string newRemainder = before + after;
+            
+            // find permutations of newRemainder
+            List<string> partials = PermutationsUsingSubstrings(newRemainder);
+            
+            foreach (string p in partials)
+            {
+                toReturn.Add(remainder[i] + p);
+            }
+        }
+        
+        return toReturn;
+    }
+
+    static IEnumerable<string> PermutationsUsingLinq(string source)
+    {
+        if (source.Length == 1) return new List<string> { source };
+    
+        var permutations = from c in source
+                            from p in PermutationsUsingLinq(new String(source.Where(x => x != c).ToArray()))
+                            select c + p;
+    
+        return permutations;
+    }
+    
+    // https://www.geeksforgeeks.org/write-a-c-program-to-print-all-permutations-of-a-given-string/
+    static List<string> PermutationsUsingSwap(char[] list, int k, int m)
+    {
+        // Console.WriteLine("{0}, {1}, {2}", new string(list), k, m);
+        
+        List<string> toReturn = new List<string>();
+        
+        if (k == m)
+        {
+            toReturn.Add(new string(list));
+        }
+        else
+        {
+            for (int i = k; i <= m; i++)
+            {
+                   Swap(ref list[k], ref list[i]);
+                   List<string> permutations = PermutationsUsingSwap(list, k+1, m);
+                   foreach (string p in permutations)
+                   {
+                        toReturn.Add(p);
+                   }
+                   Swap(ref list[k], ref list[i]);
+            }
+        }
+        
+        return toReturn;
+    }
+
+    static void Swap(ref char a, ref char b)
+    {
+      
+        char temp = a;
+        a = b;
+        b = temp;
+    }
+}
