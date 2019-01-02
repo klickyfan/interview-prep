@@ -1,0 +1,226 @@
+using System.IO;
+using System;
+using System.Collections.Generic;
+
+/* BFT (with a queue) and DFT (with recursion) */
+
+/*
+sources:
+https://www.youtube.com/watch?v=XU_ugVTSjSE
+https://www.geeksforgeeks.org/tree-traversals-inorder-preorder-and-postorder/
+https://www.techiedelight.com/depth-first-search/
+https://www.techiedelight.com/level-order-traversal-binary-tree/
+https://www.techiedelight.com/inorder-tree-traversal-iterative-recursive/
+*/
+    
+class Program
+{
+    class Node 
+    {        
+        private string value;
+        public string Value { get { return value; } }
+                
+        private Node left;
+        public Node Left { get { return left; } }
+        
+        private Node right;
+        public Node Right { get { return right; } }
+        
+        // constructor for interior node
+        public Node(string value, Node left, Node right)
+        {
+            this.value = value;
+            this.left = left;
+            this.right = right;
+        }
+        
+        // constructor for leaf node
+        public Node(string value)
+        {            
+            this.value = value;
+            this.left = null;
+            this.right = null;
+        }
+    }
+    
+    static void Main()
+    {
+        Node tree = MakeTestTree();
+        
+        Console.WriteLine("BFT: ");
+        BFT(tree);
+        
+        Console.WriteLine();
+        
+        Console.WriteLine("Tree width: ");
+        TreeWidth(tree);
+        
+        Console.WriteLine();
+        
+        Console.WriteLine("Preorder DFT: ");
+        PreorderDFT(tree);
+        
+        Console.WriteLine();
+        
+        Console.WriteLine("In order DFT: ");
+        InOrderDFT(tree);
+        
+        Console.WriteLine();
+        
+        Console.WriteLine("Iterative in order DFT: ");
+        IterativeInOrderDFT(tree);
+        
+        Console.WriteLine();
+        
+        Console.WriteLine("Postorder DFT: ");
+        PostorderDFT(tree);
+    }
+    
+    /*
+                                a
+                b                               i
+        c               f                   j       l
+    d       e       g       h           k
+    
+    */
+    static Node MakeTestTree()
+    {
+        Node root = 
+            new Node(
+                "a",
+                new Node(
+                    "b",
+                    new Node(
+                        "c",
+                        new Node("d"),
+                        new Node("e")),
+                    new Node(
+                        "f",
+                        new Node("g"),
+                        new Node("h"))),
+                new Node(
+                    "i",
+                    new Node("j",
+                             new Node("k"),
+                             null),
+                    new Node("l")));
+                    
+        return root;
+    }
+    
+    static void BFT(Node rootNode)
+    {
+        Queue<Node> queue = new Queue<Node>();
+        
+        queue.Enqueue(rootNode);
+        
+        while (queue.Count != 0)
+        {
+            Node node = queue.Dequeue();
+            Console.Write(node.Value + " ");
+            
+            if (node.Left != null)
+                queue.Enqueue(node.Left);
+                
+            if (node.Right != null)
+                queue.Enqueue(node.Right);
+        }
+    }
+    
+    static void TreeWidth(Node rootNode)
+    {
+        Queue<Node> queue = new Queue<Node>();
+        
+        queue.Enqueue(rootNode);
+        
+        int biggestWidth = 0;
+        
+        while (queue.Count != 0)
+        {
+            // number of nodes at current level
+            int width = queue.Count; 
+            
+            while (width > biggestWidth)
+            {
+                biggestWidth = width;
+            }
+            
+            // process all nodes at current level
+            while (width != 0)
+            {
+                Node node = queue.Dequeue();
+                
+                if (node.Left != null)
+                    queue.Enqueue(node.Left);
+                    
+                if (node.Right != null)
+                    queue.Enqueue(node.Right);
+                    
+                width--;
+            }
+        }
+        
+        Console.Write(biggestWidth);
+    }
+    
+    static void PreorderDFT(Node node)
+    {
+        if (node == null)
+        {
+            return;
+        }
+        
+        Console.Write(node.Value + " ");
+    
+        PreorderDFT(node.Left);
+        PreorderDFT(node.Right);
+    }
+    
+    static void InOrderDFT(Node node)
+    {
+        if (node == null)
+        {
+            return;
+        }
+        
+        InOrderDFT(node.Left);
+        
+        Console.Write(node.Value + " ");
+        
+        InOrderDFT(node.Right);
+    }
+    
+    static void IterativeInOrderDFT(Node node)
+    {
+        Stack<Node> stack = new Stack<Node>();
+        
+        while (stack.Count != 0 || node != null)
+        {
+            if (node != null)
+            {
+                stack.Push(node);
+                node = node.Left;
+            }
+            else
+            {
+                node = stack.Pop();
+                Console.Write(node.Value + " ");
+                
+                node = node.Right;
+            }
+        }
+    }
+    
+    static void PostorderDFT(Node node)
+    {
+        if (node == null)
+        {
+            return;
+        }
+        
+        PostorderDFT(node.Left);
+        PostorderDFT(node.Right);
+        
+        Console.Write(node.Value + " ");
+    }
+}
