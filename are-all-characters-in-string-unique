@@ -1,0 +1,96 @@
+using System.IO;
+using System;
+using System.Linq;
+using System.Collections;
+
+class Program
+{
+    /* are all characters in a string unique */
+    
+    static void Main()
+    {
+        Console.WriteLine("Hello, World!");
+        
+        string testString = Console.ReadLine().Trim();
+        Console.WriteLine("|{0}|", testString);
+        
+        if (isUniqueMethod3(testString)) 
+        {
+            Console.WriteLine("all characters unique");
+        }
+        else
+        {
+            Console.WriteLine("some duplicate characters");
+        }
+    }
+    
+    static bool isUniqueMethod1(string testString)
+    {
+        /* sort string using char[] */
+        
+        char[] charArray = testString.ToCharArray();
+        Array.Sort(charArray);
+        Console.WriteLine(new string(charArray));
+        
+        /* find duplicates */
+        
+        bool firstChar = true;
+        char lastChar = 'a'; // set to something to appease the compiler
+        foreach (char currentChar in charArray)
+        {
+            if ((!firstChar) && (currentChar == lastChar))
+            {
+                return false;
+            }
+            
+            lastChar = currentChar;
+            firstChar = false;
+        }
+        
+        return true;
+    }
+    
+    static bool isUniqueMethod2(string testString)
+    {
+        /* sort string (one of two ways without char[] */
+        
+        string sortedString = String.Concat(testString.OrderBy(c => c));
+        // string sortedString = new string (str.OrderBy(c => c).ToArray())
+        
+        /* look for duplicates */
+        
+        bool firstChar = true;
+        char lastChar = 'a'; // set to something to appease the compiler
+        for (int i = 0; i < sortedString.Length; i++)
+        {
+            char currentChar = sortedString[i];
+            if ((!firstChar) && (currentChar == lastChar))
+            {
+                Console.WriteLine("{0} {1}", currentChar, lastChar);
+                return false;
+            }
+            
+            lastChar = currentChar;
+            firstChar = false;
+        }
+        
+        return true;
+    }
+    
+    static bool isUniqueMethod3(string testString)
+    {
+        // uses hashtable
+        
+        Hashtable hashtable = new Hashtable();
+        
+        for (int i = 0; i < testString.Length; i++)
+        {
+            char currentChar = testString[i];
+            if (hashtable.Contains(currentChar)) // stop if found duplicate
+                return false;
+            hashtable.Add(currentChar, null);
+        }
+        
+        return true;
+    }
+}
