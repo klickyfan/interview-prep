@@ -1,0 +1,45 @@
+using System.IO;
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        int[] reservoir = new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 18, 20, 30, 32, 40, 41, 43, 44 };  
+  
+        PrintReservoirSample(reservoir, 5);
+    }
+    
+    static void PrintReservoirSample(int[] reservoir, int sampleSize)
+    {
+        if (sampleSize > reservoir.Length)
+        {
+            Console.WriteLine("Sample size is too big.");
+        }
+        else if (sampleSize == reservoir.Length)
+        {
+            Console.WriteLine(string.Join(", ", reservoir));
+        }
+        else
+        {
+            HashSet<int> sample = new HashSet<int>();
+            
+            Random r = new Random();
+            
+            int i = 0;
+            while (i < sampleSize)
+            {
+                int randomIndex = r.Next(0, reservoir.Length - 1);
+                
+                if (!sample.Contains(reservoir[randomIndex]))
+                {
+                    sample.Add(reservoir[randomIndex]);
+                    i++;
+                }
+            }
+            
+            Console.WriteLine(string.Join(", ", sample));
+        }
+    }
+}
