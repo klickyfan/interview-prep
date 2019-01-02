@@ -1,0 +1,82 @@
+using System;
+using System.Collections.Generic;
+
+class MyProgram
+{
+    enum Days { Sat, Sun, Mon, Tue, Wed, Thu, Fri };
+ 
+    static void Main(string[] args)
+    {
+        /* string to enum */
+        
+        string val = "Sun";
+        Days newDay = (Days)Enum.Parse(typeof(Days), val);
+        if (newDay == Days.Sun)
+        {
+            Console.WriteLine(newDay.ToString());
+        }
+        
+        Console.WriteLine("********");
+        
+        /* print enum */
+        
+        foreach (Days day in Enum.GetValues(typeof(Days)))
+        {
+            Console.WriteLine(day); // not no need to say day.ToString() to print
+            Console.WriteLine((int) day);
+        }
+        
+        Console.WriteLine("********");
+        
+        Days a = (Days) 3;
+        Console.WriteLine(a.ToString()); // prints Tues
+        Days b = (Days) 50;
+        Console.WriteLine(b.ToString()); // prints 50 (does not throw exception; see note below)
+
+        Console.WriteLine("********");
+        
+        enumToList1();
+        
+        Console.WriteLine("********");
+        
+        enumToList2();
+    }
+        
+    static void enumToList1() {
+        Array arr = Enum.GetValues(typeof(Days));
+        List<string> lstDays = new List<string>(arr.Length);
+        for (int i = 0; i < arr.Length; i++)
+        {
+            lstDays.Add(arr.GetValue(i).ToString());
+        }  
+        foreach(string day in lstDays)
+            Console.WriteLine(day);
+    }
+    
+    static void enumToList2() {
+        int[] arr = (int[]) Enum.GetValues(typeof(Days));
+        List<string> lstDays = new List<string>(arr.Length);
+        for (int i = 0; i < arr.Length; i++)
+        {
+            lstDays.Add(((Days)arr[i]).ToString());
+        }     
+        foreach(string day in lstDays)
+            Console.WriteLine(day);
+    }
+}
+
+/*
+
+Interview prep notes:
+
+Casting int to an invalid enum does not throw an exception. This was a decision 
+on the part of the people who created .NET. An enum is backed by another integral
+value type (int, short, byte, etc), and so it can actually have any value that is 
+valid for those value types.
+
+The default variable for an enum E is (E)0.
+
+You can change the underlying type of an enum with this syntax:
+enum Day : byte {Sat=1, Sun, Mon, Tue, Wed, Thu, Fri};
+
+*/
