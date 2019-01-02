@@ -1,0 +1,95 @@
+using System.IO;
+using System;
+
+class Program
+{
+    /*
+    determines if two strings are one edit different (one insert, one replace,
+    one removal)
+    
+    CtCI 1.5, p. 199
+    */
+    
+    const bool DEBUGGING = true;
+    
+    static void Main()
+    {
+        Console.WriteLine("Hello, World!");
+        
+        /* insert case */
+        
+        string a = "pale";
+        string b = "palke";
+        
+        Console.WriteLine("Expecting True: " + oneEditAway(a, b));
+        
+        /* completely different but same length case */
+        
+        a = "pal";
+        b = "mom";
+       
+        Console.WriteLine("Expecting False: " + oneEditAway(a, b));
+        
+        /* one letter replaced in middle case */
+        
+        a = "mam";
+        b = "mom";
+       
+        Console.WriteLine("Expecting True: " + oneEditAway(a, b));
+        
+        /* one letter removed at end case */
+          
+        a = "pal";
+        b = "pa";
+       
+        Console.WriteLine("Expecting True: " + oneEditAway(a, b));
+        
+        /* only one letter in common */
+        
+        a = "pal";
+        b = "p";
+       
+        Console.WriteLine("Expecting False: " + oneEditAway(a, b));
+        
+    }
+    
+    static bool oneEditAway(string a, string b) {
+        
+        // can't be one edit away if two characters different
+        if (a.Length - b.Length > 1 ) return false;
+        
+        bool oneDifferenceFound = false;
+        
+        int aIndex = 0;
+        int bIndex = 0;
+        
+        while(aIndex < a.Length && bIndex < b.Length)
+        {
+            if (DEBUGGING)
+            {
+                Console.WriteLine(
+                    "Comparing a[{0}] = {1} with b[{2}] = {3}", 
+                    aIndex, a[aIndex], bIndex, b[bIndex]);
+            }
+            if (a[aIndex] == b[bIndex]) // chars match so move both indices forward
+            {
+                aIndex++;
+                bIndex++;
+            }
+            else
+            {
+                if (oneDifferenceFound) // a second difference has been found
+                    return false;
+                else
+                    oneDifferenceFound = true;
+        
+                if (a.Length >= b.Length) 
+                    aIndex++;
+                if (b.Length >= a.Length)
+                    bIndex++;
+            }
+        }
+        
+        return true;
+    }
+}
