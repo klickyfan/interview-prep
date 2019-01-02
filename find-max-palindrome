@@ -1,0 +1,126 @@
+using System.IO;
+using System;
+
+class Program
+{
+    /*
+    
+    find max palindrome of product of 2 3 digit numbers
+    
+    note: largest product of 2 3 digit numbers is 998001, a 6 digit number
+    
+    */
+    
+    static void Main()
+    {
+        /* testing isPalindrome methods */
+        
+        Console.WriteLine(isPalindromeMethod1(12321));
+         
+        Console.WriteLine(isPalindromeMethod2(12321));
+           
+        /* do work in two different ways */
+        
+        largestPalindromeMethod1();
+        
+        largestPalindromeMethod2();
+    }
+    
+    static void largestPalindromeMethod1()
+    {
+        /* O(n^2) method */
+        
+        int largestPalindrome = 0;
+        for (int i = 999; i > 100; i--)
+        {
+            for (int j = i; j > 100; j--)
+            {
+                int product = i * j;
+                if (isPalindromeMethod1(product)) 
+                {    
+                    if (product > largestPalindrome) 
+                    {
+                        Console.WriteLine("{0} * {1} = {2}", i, j, product);
+                        
+                        largestPalindrome = product;
+                    }
+                }
+            }
+        }
+        Console.WriteLine("largest palidrome: " + largestPalindrome);
+    }
+    
+    static void largestPalindromeMethod2()
+    {
+        for (int i = 998001; i > 0; i--) {
+            if (isPalindromeMethod1(i)) {
+                if (isDivisible(i)) {
+                    Console.WriteLine("largest palidrome: " + i);
+                    return;
+                }
+                
+            }
+        }
+    }
+    
+    static bool isPalindromeMethod1(int number) 
+    {
+        /* first extract digits */
+        int[] digits = new int[6];
+        
+        int digit = 0;
+        while (number != 0)
+        {
+            digits[digit] = number % 10;
+            number = number / 10;
+            digit++;
+        }
+
+        /* now check if palindrome */
+        int j = digit - 1;
+        for (int i = 0; i < j; i++) 
+        {
+            if (digits[i] != digits[j]) {
+                return false;
+            }
+            j--;
+        }
+    
+        return true;
+        
+    }
+    
+    static bool isPalindromeMethod2(int number) 
+    {
+        string numberAsString = number.ToString();
+        
+        int j = numberAsString.Length - 1;
+        for (int i = 0; i < j; i++)
+        {
+            if (numberAsString[i] != numberAsString[j])
+            {
+                return false;
+            }
+            j--;
+        }
+        
+        return true;
+    }
+    
+    static bool isDivisible(int number)
+    {
+        for (int i = 100; i <= 999; i++)
+        {
+            if (number % i == 0)
+            {
+                int otherNumber = number / i;
+                if (otherNumber >= 100 && otherNumber <= 999) 
+                {
+                    Console.WriteLine("{0} * {1} = {2}", i, number / i, number);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+}
