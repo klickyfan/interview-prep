@@ -1,0 +1,116 @@
+using System.IO;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+class Program
+{
+    /* 
+    This program takes a number as input and outputs the
+    biggest number with the same set of digits.
+    */
+    
+    static void Main()
+    {
+        List<int> digits = numberToDigits(2531);
+        Console.WriteLine("unsorted digits:");
+        printDigits(digits);
+        
+        digits.Sort(); // sorts in place
+        Console.WriteLine("sorted digits:");
+         printDigits(digits);
+        
+        digits.Reverse(); // reverses in place
+        Console.WriteLine("reverse sorted digits:");
+        printDigits(digits);
+        
+        digits.OrderBy(i=>i);
+        Console.WriteLine("sorted digits, but not sorted, because not in place:");
+        printDigits(digits);
+        
+        digits = digits.OrderBy(i=>i).ToList();
+        Console.WriteLine("sorted digits:");
+        printDigits(digits);
+        
+        digits = digits.OrderByDescending(i=>i).ToList();
+        Console.WriteLine("reverse sorted digits:");
+        printDigits(digits);
+        
+        int newNumber = digitsToNumber(digits);
+        Console.WriteLine(newNumber);
+        
+        int newNumber2 = digitsToNumberMethod2(digits);
+        Console.WriteLine(newNumber2);
+    }
+    
+    static List<int> numberToDigits(int number) {
+        
+        /*
+        2531 % 10 = 1
+        2531 / 10 = 253
+        253 % 10 = 3
+        253 / 10 = 25
+        25 % 10 = 5
+        25 / 10 = 2
+        2
+        */
+        
+        List<int> digits = new List<int>();
+        
+        int mod = 10;
+
+        while (mod <= number) 
+        {
+            digits.Add(number % 10);
+            number = number / mod;
+        }
+        
+        digits.Add(number);
+        
+        return digits;
+    }
+    
+    static int digitsToNumber(List<int> digits)
+    {
+        /*
+        1 + 10(2) + 100(3) + 1000(5) 
+        */
+        
+        digits.Sort(); 
+        int number = 0;
+        int multiplier = 1;
+        foreach (int digit in digits)
+        {
+            number = number + multiplier * digit;
+            multiplier *= 10;
+        }
+        
+        return number;
+    }
+    
+    static int digitsToNumberMethod2(List<int> digits)
+    {
+        digits.Sort();
+        digits.Reverse();
+        string numberAsString = String.Empty;
+        foreach(int digit in digits)
+        {
+            numberAsString = numberAsString + digit;
+            
+            
+        }
+        
+        Console.WriteLine(numberAsString);
+        return System.Convert.ToInt32(numberAsString);
+    }
+    
+    static void printDigits(List<int> digits)
+    {
+        for (int i = 0; i < digits.Count ; i++)
+        {
+            Console.WriteLine(String.Format("{0}", digits[i]));
+        }
+    }
+    
+    
+}
