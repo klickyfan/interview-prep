@@ -1,0 +1,212 @@
+using System.IO;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+class Program
+{
+    /*
+    https://mortoray.com/2017/12/14/interview-question-a-two-player-card-game/
+    */
+    
+    static void Main()
+    {
+        Game cardGame = new Game();
+        
+        cardGame.Play();
+        
+        cardGame.ReportScores();
+    }
+}
+
+class Game 
+{
+    const int NUM_PLAYERS = 3;
+    
+    private Deck deckOfCards = new Deck();
+    private Player[] players = new Player[NUM_PLAYERS];
+    
+    public Game()
+    {
+        for (int playerIndex=0; playerIndex < NUM_PLAYERS; playerIndex++)
+        { 
+            players[playerIndex] = new Player();
+        }
+        
+        deckOfCards.Deal(players);
+    }
+    
+    public void Play()
+    {
+        SortedDictionary<Card, int> cardsOnTable = 
+            new SortedDictionary<Card, int>(new CardComparer());
+        
+        int turn = 0;
+        for (int i = 0; i < Deck.TOTAL_CARDS; i++)
+        {
+            cardsOnTable.Add(players[turn].PlayCard(), turn);
+            
+            Console.WriteLine("turn: {0}, cardsOnTable: {1}", 
+                turn, String.Join(", ", cardsOnTable));
+            
+            if (turn + 1 == NUM_PLAYERS)
+            {
+                KeyValuePair<Card, int> winningCard = cardsOnTable.First();
+                Console.WriteLine("winningCard: {0}", winningCard);
+                
+                int winningPlayer = winningCard.Value;
+                Console.WriteLine("winning player: {0}", winningPlayer);
+                
+                players[winningPlayer].AddPoint();
+                
+                cardsOnTable.Clear();
+            }
+            
+            turn = (turn + 1) % NUM_PLAYERS;
+        }
+    }
+    
+    public void ReportScores()
+    {
+        for (int playerIndex = 0; playerIndex < NUM_PLAYERS; playerIndex++)
+        {
+            Console.WriteLine("Player {0}'s score: {1}", 
+                playerIndex, players[playerIndex].Score);
+        }
+    }
+}
+
+class Deck
+{
+    public const int TOTAL_CARDS = 52;
+    private Stack<Card> cardStack = new Stack<Card>();
+    
+    public Deck()
+    {
+        Card[] cards = new Card[TOTAL_CARDS];
+        
+        Random randomNumberGenerator = new Random();
+        
+        /* initialize an array of 52 Cards */
+        int cardIndex = 0;
+        foreach(Card.FaceType face in Enum.GetValues(typeof(Card.FaceType)))
+        {
+            foreach(Card.SuitType suit in Enum.GetValues(typeof(Card.SuitType)))
+            {
+                Card card = new Card(face, suit);
+                cards[cardIndex] = card;
+                cardIndex++;
+            }
+        }
+        
+        /* shuffle Cards in array */
+        for (cardIndex = 0; cardIndex < cards.Length; cardIndex++)
+        {
+            int randomIndex = randomNumberGenerator.Next(1, TOTAL_CARDS - 1);
+            Card temp = cards[cardIndex];
+            cards[cardIndex] = cards[randomIndex];
+            cards[randomIndex] = temp;
+        }
+
+        /* convert arry into stack */
+        cardStack = new Stack<Card>(cards);
+        
+        Print();
+    }
+    
+    public void Deal(Player[] players)
+    {
+        Console.WriteLine("in Deck.Deal");
+        
+        for (int cardIndex = 0; cardIndex < TOTAL_CARDS; cardIndex++)
+        {
+            Card cardValue = cardStack.Pop();
+            
+            int playerIndex = cardIndex % players.Length;
+  
+            players[playerIndex].AcceptDealtCard(cardValue);
+        }
+        
+        Print();
+    }
+    
+    public void Print()
+    {
+        Console.WriteLine("deck: " + String.Join(", ", cardStack));
+    }
+}
+    
+class Player
+{
+    private Stack<Card> cardStack = new Stack<Card>();
+    
+    private int score = 0;
+    public int Score { get { return score; } }
+    
+    public Player()
+    {
+    }
+    
+    public void AcceptDealtCard(Card card)
+    {
+        cardStack.Push(card);
+    }
+    
+    public Card PlayCard()
+    {
+        return cardStack.Pop();
+    }
+    
+    public void AddPoint()
+    {
+        this.score++;
+    }
+}
+
+public class Card 
+{
+    public enum FaceType 
+    { 
+        ace=1, 
+        two=2, three=3, four=4, five=5, six=6, seven=7, eight=8, nine=9, ten=10, 
+        jack=11, queen= 12, king = 13   
+    };
+    
+    public enum SuitType { hearts, clubs, spades, diamonds };
+    
+    private FaceType face;
+    public FaceType Face { get { return face; } }
+    
+    private SuitType suit;
+    public SuitType Suit { get { return suit; } }
+    
+    public Card(FaceType face, SuitType suit)
+    {
+        this.face = face; 
+        this.suit = suit;
+    }
+    
+    public override string ToString()
+    {
+        return $"{face} of {suit}";
+    }
+}
+
+public class CardComparer : IComparer<Card>
+{
+    public int Compare(Card x, Card y)
+    {
+        if (x.Face > y.Face) 
+        {
+            return 1;
+        }
+        else if (x.Face < y.Face) 
+        { 
+            return -1; 
+        }
+        else 
+        { 
+            return x.Suit.CompareTo(y.Suit);
+        }
+    }
+}
