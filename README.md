@@ -1,1 +1,1 @@
-This repository contains all the C# code I wrote while looking for a new job in 2018. It varies in complexity, though nothing is that hard to understand, and most is quite easy, written mainly to review syntax, in preparation for coding tests for which I would not be able to use an IDE.
+This repository contains much of the C# code I wrote while looking for a new job in 2018. It varies in complexity, though nothing is that hard to understand, and most is quite easy, written mainly to review syntax, in preparation for coding tests for which I would not be able to use an IDE.
