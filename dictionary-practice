@@ -1,0 +1,199 @@
+using System.IO;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+/* dictionary practice */
+
+/* 
+dictionary:
+fast O(1) lookups
+*/
+
+class Program
+{
+    public class Definition
+    {
+        public string Word { get; set; }
+        public string PartOfSpeech { get; set; }
+        public string Meaning { get; set; }
+        
+        public override string ToString()
+        {
+            return Meaning;
+        }
+    }
+    
+    static void Main()
+    {
+        Dictionary<string, Definition> bigRedBook = new Dictionary<string, Definition>();
+
+        var definition1 = new Definition 
+        { 
+            Word = "acorn", 
+            PartOfSpeech = "noun", 
+            Meaning = "the fruit of the oak, a smooth oval nut in a rough cuplike base" 
+        };
+        var definition2 = new Definition 
+        { 
+            Word = "adore", 
+            PartOfSpeech = "verb", 
+            Meaning = "love and respect (someone) deeply"             
+        };
+        var definition3 = new Definition 
+        { 
+            Word = "available", 
+            PartOfSpeech = "adj", 
+            Meaning = "able to be used or obtained; at someone's disposal"            
+        };
+
+        // use the Add method to add items to the dictionary
+        bigRedBook.Add("acorn", definition1);
+        bigRedBook.Add("adore", definition2);
+        bigRedBook.Add("available", definition3);
+        
+        // note that Add throws an exception if the item is already in the 
+        // dictionary (unlike HashSet)
+        try
+        {
+            bigRedBook.Add("acorn", definition1);
+        }
+        catch (ArgumentException)
+        {
+            Console.WriteLine("an element with key \"acorn\" already exists");
+        }
+        
+        // property Count: gets the number of indexed elements in a dictionary
+        var wordCount = bigRedBook.Count;
+            
+        // property Keys: gets all of the keys in a dictionary
+        List<string> keyList = new List<string>(bigRedBook.Keys);
+        Console.WriteLine("all keys: {0}", String.Join(", ", keyList));
+            
+        // property Values: gets all of the item values in a dictionary
+        List<Definition> valueList = new List<Definition>(bigRedBook.Values);
+        Console.WriteLine("all values: {0}", String.Join(", ", valueList));
+
+        // can index into a dictionary with key (though an exception will be 
+        // thrown if key doesn't exist)
+        Definition defAdore = bigRedBook["adore"];
+        
+        // method: Clear
+        
+        bigRedBook.Clear();
+        
+        // method: ContainsKey
+        
+        if (!bigRedBook.ContainsKey("adore")) 
+        {
+            bigRedBook.Add("adore", definition2);
+        }
+        
+        // method: ContainsValue
+        
+        if (!bigRedBook.ContainsValue(definition2) )
+        {
+            Console.WriteLine("\"{0}\" exists in the dictionary", definition2);
+        }
+        
+        // method: Remove
+        
+        bigRedBook.Remove("adore");  
+        
+        // method: TryAdd (like Add but doesn't throw an exception)
+        
+        bool success = bigRedBook.TryAdd("acorn", definition1);
+
+        // method: TryGetValue (note use of out)
+        
+        Definition value = null;
+        if (bigRedBook.TryGetValue("acorn", out value))
+        {
+           Console.WriteLine("for key \"acorn\", found value \"{0}\"", value);
+        }
+        
+        TryMoreDictionaryTricks();
+    }
+    
+    static void TryMoreDictionaryTricks()
+    {
+        // initialization with predefined data
+        var score = new Dictionary<string, int>
+        {
+            { "A", 1 },
+            { "B", 2 }
+        };
+        
+        // a case insensitive dictionary
+        
+        var d = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        
+        // using Linq
+        
+        var students = new Dictionary<string, string>();
+        var subset = students.Where(entry => entry.Key.StartsWith("A"));
+        
+        MergeDictionaries();
+    }
+    
+    static void MergeDictionaries()
+    {
+        var dictionary1 = new Dictionary<string, int>();
+        var dictionary2 = new Dictionary<string, int>();
+        
+        var merged = dictionary1
+            .Concat(dictionary2)
+            .GroupBy(i => i.Key)
+            .ToDictionary(group => group.Key, group => group.First().Value);
+    }
+}
+
+/*
+Dictionary<TKey, TValue>
+
+properties:
+Comparer
+Count
+Keys (KeyCollection)
+Values (ValueCollection)
+
+most used methods:
+Add (throws exception if attemp is made to add duplicate... hence TryAdd)
+Clear
+ContainsKey
+ContainsValue
+Remove
+TryAdd
+TryGetValue
+*/
+
+/*
+Instead of a large switch/case statement you can construct a dictionary which 
+will work in the same manner. This alone saves some space. But if we take into 
+account that we can add new entries to it during application execution then we 
+have a more elastic solution than the (stiff) switch/case.
+
+Here’s an example of mapping http codes to messages:
+
+// this switch statment
+int httpCode  = 415;
+switch(httpCode)
+{
+    case 200:
+        return "OK";
+    case 404:
+        return "Not found";
+    default:
+        return "Unknow code";
+}
+// can be refactored into this
+int httpCode = 415;
+var httpCodes = new Dictionary<int, string>
+{
+    { 200, "OK" },
+    { 404, "Not found" }
+};
+
+httpCodes.TryGetValue(httpCode, out string result);
+return result ?? "Unknown code";
+*/
