@@ -1,0 +1,50 @@
+using System.IO;
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("Hello, World!");
+        
+        PrintMultiplicationTable(2, 3);
+        
+        Console.WriteLine();
+        
+        PrintMultiplicationTable(1, 3);
+        
+        Console.WriteLine();
+        
+        PrintMultiplicationTable(4, 10);
+    }
+    
+    /*
+    2, 3
+    
+    2 4 6
+    3 6 9
+    */
+    static void PrintMultiplicationTable(int x, int y)
+    {
+        int numEntries = (y - x + 1) * y;
+        int row = x;
+        int column = 1;
+        
+        for (int i = 0; i < numEntries; i++)
+        {
+            int numberToPrint = row * column;
+            Console.Write(numberToPrint + "\t");
+            
+            if (column % y == 0)
+            {
+                Console.WriteLine();
+                row++;
+                column = 1;
+            }
+            else 
+            {
+               column++;
+            }
+        }
+    }
+}
