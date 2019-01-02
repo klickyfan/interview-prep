@@ -1,0 +1,50 @@
+using System.IO;
+using System;
+using System.Linq;
+
+class Program
+{
+    public static void Main()
+    {
+        string testString;
+        
+        Console.Write("Enter a string:");
+        testString = Console.ReadLine();
+        
+        /* strings are immutable so can't do this */
+        /*
+        char temp = testString[0];
+        testString[0] = testString[testString.Length - 1];
+        testString[testString.Length - 1] = temp;
+        */
+        
+        /* need to use ToCharArray() instead */
+        
+        /* swap first and last characters */
+        char[] charArray = testString.ToCharArray();
+        char temp = charArray[0];
+        charArray[0] = charArray[charArray.Length - 1];
+        charArray[charArray.Length - 1] = temp;
+        
+        string newString1 = new String(charArray);
+        Console.WriteLine("String with first and last characters swapped: {0}", newString1);
+        
+        /* reverse string, method 1 */
+        charArray = testString.ToCharArray();
+        int j = testString.Length - 1;
+        for (int i = 0; i < j; i++)
+        {
+            temp = charArray[i];
+            charArray[i] = charArray[j];
+            charArray[j] = temp;
+            j--;
+        }
+        
+        string newString2 = new String(charArray);
+        Console.WriteLine("String reversed: {0}", newString2);
+        
+        string newString3 = new string(testString.Reverse().ToArray()); 
+        
+        Console.WriteLine("String reversed another way: {0}", newString3);
+    }
+}
