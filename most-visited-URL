@@ -1,0 +1,135 @@
+using System.IO;
+using System;
+using System.Collections.Generic;
+
+/* implement a set of classes to efficiently keep track of most visited URL */
+
+/* uses priority queue: http://www.vcskicks.com/priority-queue.php */ 
+
+class Program
+{
+    static void Main()
+    {
+        URLPriorityQueue queue = new URLPriorityQueue();
+          
+        queue.Add("/index.html");
+        queue.Add("/about.html");
+        queue.Add("/index.html");
+        queue.Add("/copyright.html");
+        queue.Add("/jobs.html");
+        queue.Add("/jobs.html");
+        queue.Add("/jobs.html");
+        queue.Add("/index.html");
+        queue.Add("/index.html");
+        
+        Console.WriteLine(
+            "\nThe most visited URL was \"{0}\" which was visited {1} times.",
+            queue.MostVisited().Address,
+            queue.MostVisited().Visited);
+    }
+}
+
+public class URL {
+    
+    private string address;
+    public string Address { get { return address; } }
+    
+    private int visited;
+    public int Visited { get { return visited; } }
+    
+    public URL(string address)
+    {
+        this.address = address;
+        this.visited = 1;
+    }
+    
+    public void AddVisit()
+    {
+        this.visited++;
+    }
+    
+    public bool Equals(URL a, URL b)
+    {
+        return (a.address == b.address);
+    }
+    
+    public int GetHashCode(URL obj)
+    {
+        return ((URL) obj).GetHashCode();
+    }
+    
+    public int CompareTo(URL obj)
+    {
+        return visited.CompareTo(obj.visited);
+    }
+    
+    public override string ToString()
+    {
+        return address + "(" + visited + ")";
+    }
+}
+
+class URLPriorityQueue
+{
+    List<URL> URLHeap;
+    Dictionary<string, int> URLDictionary;
+    
+    public URLPriorityQueue()
+    {
+        URLHeap = new List<URL>();
+        URLDictionary = new Dictionary<string, int>();
+    }
+    
+    public void Add(string address)
+    {
+        if (URLDictionary.ContainsKey(address))
+        {
+            // URL has been visited before; increase visited count
+            
+            int index = URLDictionary[address];
+            URLHeap[index].AddVisit();
+        }
+        else
+        {
+            // never visited this URL before
+            
+            URLDictionary.Add(address, URLHeap.Count);
+            
+            URL newURL = new URL(address);
+            URLHeap.Add(newURL);
+        }
+        
+        BubbleUp();
+        
+        Console.WriteLine("heap:" + string.Join(", ", URLHeap));
+        Console.WriteLine("dictionary:" + string.Join(", ", URLDictionary));
+    }
+    
+    private void BubbleUp()
+    {
+        int index = URLHeap.Count - 1;
+        while (index != 0)
+        {
+            if (URLHeap[index].CompareTo(URLHeap[index/2]) == 1)
+            {
+                Swap(index, index/2);
+            }
+            index = index/2;
+        }
+    }
+    
+    private void Swap(int a, int b)
+    {
+        URL temp = URLHeap[a];
+        URLHeap[a] = URLHeap[b];
+        URLHeap[b] = temp;
+        
+        URLDictionary[URLHeap[a].Address] = a;
+        URLDictionary[URLHeap[b].Address] = b;
+    }
+    
+    public URL MostVisited()
+    {
+        return URLHeap[0];
+    }
+}
