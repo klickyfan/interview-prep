@@ -1,0 +1,94 @@
+using System.IO;
+using System;
+using System.Linq;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        string testString0 = "hello there kim";
+        string testString1 = "kim elolh teerh";
+        Test(testString0, testString1);
+        
+        testString0 = "hello there";
+        testString1 = "kim elolh";
+        Test(testString0, testString1);
+    }
+    
+    static void Test(string testString0, string testString1)
+    {
+        if (IsPermutationMethod1(testString0, testString1))
+        {
+            Console.WriteLine("\"{0}\" and \"{1}\" are permutations", testString0, testString1);
+        }
+        else 
+        {
+            Console.WriteLine("\"{0}\" and \"{1}\" are not permutations", testString0, testString1);
+        }
+    }
+    
+    static bool IsPermutationMethod0(string inputString0, string inputString1)
+    {
+        // uses sorting; O(nlogn) since Linq uses quicksort
+        
+        if (inputString0.Length != inputString1.Length)
+        {
+            return false;
+        }
+        
+        string sortedInputString0 = new string(inputString0.OrderBy(c=>c).ToArray());
+        string sortedInputString1 = new string(inputString1.OrderBy(c=>c).ToArray());
+        
+        if (sortedInputString0.Equals(sortedInputString1))
+        {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    static bool IsPermutationMethod1(string inputString0, string inputString1)
+    {
+        // uses Dictionary; O(n)
+        
+        if (inputString0.Length != inputString1.Length)
+        {
+            return false;
+        }
+        
+        Dictionary<char, int> characterCounts = new Dictionary<char, int>();
+        
+        for(int i = 0; i < inputString0.Length; i++)
+        {
+            if (characterCounts.ContainsKey(inputString0[i]))
+            {
+                characterCounts[inputString0[i]]++;
+            }
+            else 
+            {
+                characterCounts.Add(inputString0[i], 1);
+            }
+        }
+        Console.WriteLine(string.Join(", ", characterCounts));
+        
+        for(int i = 0; i < inputString1.Length; i++)
+        {
+            if (characterCounts.ContainsKey(inputString1[i]))
+            {
+                characterCounts[inputString1[i]]--;
+                if (characterCounts[inputString1[i]] < 0)
+                {
+                    return false;
+                }
+            }
+            else 
+            {
+                Console.WriteLine("b");
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
