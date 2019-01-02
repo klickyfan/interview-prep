@@ -1,0 +1,140 @@
+using System.IO;
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        string testString = "forgeekskeegfortest";
+        
+        LongestPalindromeBruteForce(testString);
+        
+        LongestPalindromeUsingDynamicProgramming(testString);
+        
+        testString = string.Empty;
+        
+        LongestPalindromeBruteForce(testString);
+        
+        LongestPalindromeUsingDynamicProgramming(testString);
+    }
+    
+    static void LongestPalindromeBruteForce(string inputString)
+    {
+        int lengthLongestPalindrome = 0;
+        int indexLongestPalindrome = 0;
+       
+        int inputStringLength = inputString.Length;
+         
+        for (int center = 1; center < inputStringLength - 1; center++)
+        {
+            // try all even length substrings with this center
+            int start = center - 1;
+            int end = center;
+            while ((start > 0) && (end < inputStringLength) && (inputString[start] == inputString[end]))
+            {
+                int length = end - start + 1;
+                if (end - start > lengthLongestPalindrome)
+                {
+                    /*
+                    Console.WriteLine("{0} {1} {2} {3}", start, end, length, inputString.Substring(start, length));
+                    */
+                    lengthLongestPalindrome = length;
+                    indexLongestPalindrome = start;
+                }
+                start--; end++;
+            }
+            
+            // try all odd length substrings with this center
+            start = center - 1;
+            end = center + 1;
+             while ((start > 0) && (end < inputStringLength) && (inputString[start] == inputString[end]))
+            {
+                int length = end - start + 1;
+                if (end - start > lengthLongestPalindrome)
+                {
+                    /*
+                    Console.WriteLine("{0} {1} {2} {3}", start, end, length, inputString.Substring(start, length));
+                    */
+                    lengthLongestPalindrome = length;
+                    indexLongestPalindrome = start;
+                }
+                start--; end++;
+            }
+        }
+        
+        Console.WriteLine("Longest palindrome: {0}", inputString.Substring(indexLongestPalindrome, lengthLongestPalindrome));
+        
+        Console.WriteLine("Length longest palindrome = {0}", lengthLongestPalindrome);
+    }
+        
+    static void LongestPalindromeUsingDynamicProgramming(string inputString)
+    {
+        /*
+        using gynamic programming, a method for solving
+        complex problem by breaking it down into a
+        collections of simpler subproblems, solving each of
+        those subproblems just once, and storing their
+        solutions using a memory-based data structure
+        (array, map,etc).
+        */
+        
+        int lengthLongestPalindrome = 0;
+        int indexLongestPalindrome = 0;
+        
+        int inputStringLength = inputString.Length;
+        bool[,] isPalindrome = new bool[inputStringLength, inputStringLength];
+        
+        // all single length substrings are palindromes
+        for (int i = 0; i < inputStringLength; i++)
+        {
+            isPalindrome[i,i] = true;
+            lengthLongestPalindrome = 1;
+            indexLongestPalindrome = i;
+        }
+        
+        // all length 2 substrings can be checked without regard to their interior
+        for (int i = 0; i < inputStringLength - 1; i++)
+        {
+            if (inputString[i] == inputString[i+1])
+            {
+                isPalindrome[i, i+1] = true;
+                lengthLongestPalindrome = 2;
+                indexLongestPalindrome = i; // could be more than one
+            }
+            else
+            {
+                 isPalindrome[i, i+1] = false;
+            }
+        }
+        
+        // now check longer strings
+        
+        for (int length = 3; length <= inputStringLength; length++)
+        {
+            for (int start = 0; start < inputStringLength - length; start++)
+            {
+                int end = start + length - 1;
+            
+                if ((inputString[start] == inputString[end]) &&
+                    (isPalindrome[start + 1,end - 1]))
+                {
+                     
+                    isPalindrome[start, end] = true;
+                    if (length > lengthLongestPalindrome)
+                    {
+                        lengthLongestPalindrome = length;
+                        indexLongestPalindrome = start;
+                    }
+                }
+                else
+                {
+                    isPalindrome[start, end] = false;
+                }
+            }
+        }
+        
+        Console.WriteLine("Longest palindrome: {0}", inputString.Substring(indexLongestPalindrome, lengthLongestPalindrome));
+        
+        Console.WriteLine("Length longest palindrome = {0}", lengthLongestPalindrome);
+    }
+}
